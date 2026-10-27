@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VANDAL LAB — Gerador de Graffiti, Pixo & Letter Science</title>
+  <meta name="description" content="Crie tags de graffiti e pixação personalizadas em tempo real com análise estrutural de letras (Letter Science), inspirado no joshgrafx.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Permanent+Marker&family=Rubik+Glitch&family=Sedgwick+Ave+Display&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="app-header">
+    <div class="logo-area">
+      <div class="logo-badge">SP // NY</div>
+      <h1 class="logo-title">VANDAL<span>LAB</span></h1>
+      <span class="logo-sub">TAG & LETTER SCIENCE</span>
+    </div>
+    <div class="header-actions">
+      <button id="btnRandomTag" class="btn btn-secondary" title="Gerar nome aleatório para inspiração">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+        Tag Aleatória
+      </button>
+      <button id="btnSoundToggle" class="btn btn-icon" title="Ativar/Desativar Som do Spray">
+        <span id="soundIcon">🔊</span>
+      </button>
+      <a href="#analyserSection" class="btn btn-accent">Ciência da Letra ↓</a>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="app-container">
+    
+    <!-- Left: Controls Panel -->
+    <aside class="controls-sidebar">
+      <div class="card panel-card">
+        <h2 class="panel-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Sua Assinatura
+        </h2>
+        
+        <!-- Text Input -->
+        <div class="form-group">
+          <label for="tagInput">NOME / VULGO / TAG:</label>
+          <div class="input-with-counter">
+            <input type="text" id="tagInput" maxlength="16" value="VANDAL" autocomplete="off" spellcheck="false" placeholder="Digite seu vulgo...">
+            <span id="charCount">6/16</span>
+          </div>
+        </div>
+
+        <!-- Tag Styles -->
+        <div class="form-group">
+          <label>ESTILO DA TAG:</label>
+          <div class="style-selector" id="styleSelector">
+            <button class="style-btn active" data-style="pixo" title="Pixação reta vertical tradicional de São Paulo">
+              <span class="style-icon">⚡</span>
+              <span class="style-name">Pixo Reto</span>
+              <small>SP Straight</small>
+            </button>
+            <button class="style-btn" data-style="throwup" title="Bombing estilo letras balão arredondadas">
+              <span class="style-icon">💣</span>
+              <span class="style-name">Throw-Up</span>
+              <small>Bubble Bomb</small>
+            </button>
+            <button class="style-btn" data-style="wild" title="Wildstyle tag com fluxo caligráfico">
+              <span class="style-icon">🔥</span>
+              <span class="style-name">Handstyle</span>
+              <small>Marker Flow</small>
+            </button>
+            <button class="style-btn" data-style="drip" title="Tag escorrendo tinta com gotas pesadas">
+              <span class="style-icon">💧</span>
+              <span class="style-name">Drip Tag</span>
+              <small>Fat Cap Drips</small>
+            </button>
+          </div>
+        </div>
+
+        <!-- Presets de Cor de Tinta -->
+        <div class="form-group">
+          <label>CORES DA LATA DE SPRAY:</label>
+          <div class="color-presets" id="colorPresets">
+            <button class="color-dot active" data-fill="#ffffff" data-outline="#000000" data-shadow="#00ff88" style="--c: #ffffff;" title="Chrome & Ghost Mint"></button>
+            <button class="color-dot" data-fill="#ffe600" data-outline="#000000" data-shadow="#ff0055" style="--c: #ffe600;" title="Yellow Hazard"></button>
+            <button class="color-dot" data-fill="#ff0077" data-outline="#110022" data-shadow="#00ffff" style="--c: #ff0077;" title="Cyber Fuchsia"></button>
+            <button class="color-dot" data-fill="#00ffcc" data-outline="#021f18" data-shadow="#003322" style="--c: #00ffcc;" title="Acid Green"></button>
+            <button class="color-dot" data-fill="#ff3b00" data-outline="#1a0500" data-shadow="#ffe600" style="--c: #ff3b00;" title="Magma Orange"></button>
+            <button class="color-dot" data-fill="#9d00ff" data-outline="#0f0022" data-shadow="#ff00a0" style="--c: #9d00ff;" title="Purple Haze"></button>
+            <button class="color-dot" data-fill="#000000" data-outline="#ffffff" data-shadow="#ffffff" style="--c: #222222;" title="Stealth Black"></button>
+          </div>
+          
+          <div class="custom-colors-row">
+            <div class="color-picker-box">
+              <span>Tinta:</span>
+              <input type="color" id="fillColorPicker" value="#ffffff">
+            </div>
+            <div class="color-picker-box">
+              <span>Borda:</span>
+              <input type="color" id="outlineColorPicker" value="#000000">
+            </div>
+            <div class="color-picker-box">
+              <span>Glow/3D:</span>
+              <input type="color" id="shadowColorPicker" value="#00ff88">
+            </div>
+          </div>
+        </div>
+
+        <!-- Add-ons / Adereços da Tag -->
+        <div class="form-group">
+          <label>ELEMENTOS & ADEREÇOS:</label>
+          <div class="addons-grid">
+            <label class="checkbox-tag">
+              <input type="checkbox" id="chkCrown" checked>
+              <span>👑 Coroa</span>
+            </label>
+            <label class="checkbox-tag">
+              <input type="checkbox" id="chkHalo">
+              <span>😇 Auréola</span>
+            </label>
+            <label class="checkbox-tag">
+              <input type="checkbox" id="chkArrow" checked>
+              <span>➜ Seta</span>
+            </label>
+            <label class="checkbox-tag">
+              <input type="checkbox" id="chkQuotes" checked>
+              <span>" " Aspas</span>
+            </label>
+            <label class="checkbox-tag">
+              <input type="checkbox" id="chkUnderline" checked>
+              <span>━ Underline</span>
+            </label>
+            <label class="checkbox-tag">
+              <input type="checkbox" id="chkYear" checked>
+              <span>'26 Ano</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Sliders & Ajustes Finos -->
+        <div class="form-group">
+          <div class="slider-item">
+            <div class="slider-label">
+              <span>Tamanho do Traço</span>
+              <span id="fontSizeVal">120px</span>
+            </div>
+            <input type="range" id="fontSizeRange" min="70" max="180" value="120">
+          </div>
+
+          <div class="slider-item">
+            <div class="slider-label">
+              <span>Gotas Escorrendo (Drips)</span>
+              <span id="dripAmountVal">Médio</span>
+            </div>
+            <input type="range" id="dripAmountRange" min="0" max="25" value="10">
+          </div>
+
+          <div class="slider-item">
+            <div class="slider-label">
+              <span>Inclinação / Flow</span>
+              <span id="slantVal">-8°</span>
+            </div>
+            <input type="range" id="slantRange" min="-25" max="25" value="-8">
+          </div>
+        </div>
+
+        <!-- Fundo do Canvas -->
+        <div class="form-group">
+          <label>SUPERFÍCIE / MURO:</label>
+          <div class="surface-selector" id="surfaceSelector">
+            <button class="surface-btn active" data-surface="brick">Tijolo</button>
+            <button class="surface-btn" data-surface="concrete">Concreto</button>
+            <button class="surface-btn" data-surface="subway">Metrô Escuro</button>
+            <button class="surface-btn" data-surface="clean">Limpo (Sticker)</button>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Center: Interactive Canvas Showcase -->
+    <section class="canvas-workspace">
+      
+      <!-- Canvas Bar / Toolbar -->
+      <div class="canvas-toolbar">
+        <div class="canvas-mode-indicator">
+          <span class="status-dot"></span>
+          <span id="canvasStatusText">Muro Pronto // Clique e arraste para grafitar livremente</span>
+        </div>
+        <div class="canvas-actions">
+          <button id="btnClearSpray" class="btn btn-sm btn-ghost" title="Limpar marcas de spray adicionais">
+            Limpar Rabiscos
+          </button>
+          <button id="btnDownloadSticker" class="btn btn-sm btn-secondary" title="Baixar com fundo transparente para adesivo">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Sticker PNG
+          </button>
+          <button id="btnDownloadFull" class="btn btn-sm btn-accent" title="Exportar cena completa com muro em alta definição">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Baixar Muro HD
+          </button>
+        </div>
+      </div>
+
+      <!-- The Real-time Interactive Canvas Container -->
+      <div class="canvas-wrapper" id="canvasWrapper">
+        <canvas id="graffitiCanvas" width="1200" height="700"></canvas>
+        <div class="spray-tip-overlay" id="sprayTip">
+          <span>💡 Dica: <b>Segure o clique e arraste</b> sobre o muro para espirrar tinta spray livremente!</span>
+        </div>
+      </div>
+
+      <!-- Quick Analysis Banner (Joshgrafx teaser) -->
+      <div class="quick-banner">
+        <div class="quick-score-box">
+          <span class="score-label">LETTER SCORE</span>
+          <span class="score-value" id="quickScoreVal">88</span>
+          <span class="score-tier" id="quickTierVal">TIER A+</span>
+        </div>
+        <div class="quick-verdict-box">
+          <div class="verdict-heading" id="quickVerdictTitle">Excelente Equilíbrio de Letras</div>
+          <div class="verdict-body" id="quickVerdictDesc">Seu vulgo possui alternância forte de vogais e consoantes de grande presença estrutural.</div>
+        </div>
+        <a href="#analyserSection" class="btn btn-sm btn-outline">Ver Análise Completa ➔</a>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Section 2: LETTER SCIENCE / ANÁLISE DE LETRAS (Joshgrafx Inspired) -->
+  <section class="analyser-section" id="analyserSection">
+    <div class="section-container">
+      
+      <div class="section-header">
+        <div class="badge-tech">LETTER SCIENCE // ANÁLISE ESTRUTURAL</div>
+        <h2 class="section-title">COMO SUA TAG SE COMPORTA NA RUA?</h2>
+        <p class="section-desc">Inspirado nos estudos de peso, fluxo e espaço negativo do <em>Joshgrafx</em>. Descubra a velocidade de execução, o equilíbrio das extremidades e a vulnerabilidade da sua tag.</p>
+      </div>
+
+      <!-- Grid de Métricas Gerais -->
+      <div class="metrics-grid">
+        
+        <!-- Score Card -->
+        <div class="metric-card score-hero-card">
+          <div class="hero-score-ring">
+            <svg viewBox="0 0 120 120" class="score-ring-svg">
+              <circle cx="60" cy="60" r="50" class="ring-bg"></circle>
+              <circle cx="60" cy="60" r="50" class="ring-fill" id="scoreRingProgress" stroke-dasharray="314" stroke-dashoffset="50"></circle>
+            </svg>
+            <div class="score-inside">
+              <span id="metricFinalScore">88</span>
+              <small>/ 100</small>
+            </div>
+          </div>
+          <div class="hero-score-info">
+            <span class="score-badge-pill" id="scoreRatingPill">SAFE &amp; POWERFUL</span>
+            <h3 id="scoreVerdictTitle">Assinatura de Alto Impacto</h3>
+            <p id="scoreVerdictSummary">As letras fluem sem grandes buracos de espaço negativo. A transição entre os traços é favorável para execução rápida.</p>
+          </div>
+        </div>
+
+        <!-- Detailed Bars -->
+        <div class="metric-card">
+          <h4 class="card-subtitle">DIAGNÓSTICO TÉCNICO</h4>
+          
+          <div class="stat-bar-group">
+            <div class="stat-bar-head">
+              <span>Fluidez de Traço (Flow)</span>
+              <strong id="statFlowVal">85%</strong>
+            </div>
+            <div class="stat-track"><div class="stat-progress" id="statFlowBar" style="width: 85%;"></div></div>
+          </div>
+
+          <div class="stat-bar-group">
+            <div class="stat-bar-head">
+              <span>Velocidade de Execução (Street Speed)</span>
+              <strong id="statSpeedVal">90%</strong>
+            </div>
+            <div class="stat-track"><div class="stat-progress" id="statSpeedBar" style="width: 90%;"></div></div>
+          </div>
+
+          <div class="stat-bar-group">
+            <div class="stat-bar-head">
+              <span>Distribuição de Peso (Weight Balance)</span>
+              <strong id="statWeightVal">78%</strong>
+            </div>
+            <div class="stat-track"><div class="stat-progress" id="statWeightBar" style="width: 78%;"></div></div>
+          </div>
+
+          <div class="stat-bar-group">
+            <div class="stat-bar-head">
+              <span>Controle de Espaço Vazio (Negative Space)</span>
+              <strong id="statSpaceVal">82%</strong>
+            </div>
+            <div class="stat-track"><div class="stat-progress" id="statSpaceBar" style="width: 82%;"></div></div>
+          </div>
+
+        </div>
+
+        <!-- Pros and Tips -->
+        <div class="metric-card">
+          <h4 class="card-subtitle">CONSELHO DE VANDAL LAB</h4>
+          <ul class="tips-list" id="tipsList">
+            <!-- Injetado dinamicamente via JS -->
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Letter by Letter Breakdown Cards -->
+      <div class="letters-breakdown-wrapper">
+        <h3 class="breakdown-title">ANÁLISE LETRA POR LETRA</h3>
+        <p class="breakdown-subtitle">Clique em cada letra para ver suas características morfológicas, pontos de pressão e estabilidade:</p>
+        
+        <div class="letter-cards-grid" id="letterCardsGrid">
+          <!-- Gerado via JS de acordo com a palavra digitada -->
+        </div>
+      </div>
+
+      <!-- Educational Tier Guide -->
+      <div class="tier-legend-card">
+        <h3>GUIA DE HIERARQUIA DE LETRAS (TIER LIST)</h3>
+        <div class="tier-legend-grid">
+          <div class="tier-item tier-s">
+            <span class="tier-tag">TIER S</span>
+            <div class="tier-letters">A, E, K, R, S, X</div>
+            <p>Letras âncoras. Possuem diagonais dinâmicas, braços expansivos e sustentam o peso da tag perfeitamente nas pontas.</p>
+          </div>
+          <div class="tier-item tier-a">
+            <span class="tier-tag">TIER A</span>
+            <div class="tier-letters">B, D, M, N, O, P, T, Z</div>
+            <p>Letras sólidas com bom equilíbrio de massa e fáceis de estilizar em throw-up ou pixação.</p>
+          </div>
+          <div class="tier-item tier-b">
+            <span class="tier-tag">TIER B</span>
+            <div class="tier-letters">C, F, G, H, L, U, V, W, Y</div>
+            <p>Exigem atenção com espaço negativo (ex: C e L criam vácuos à direita; F e T criam vazios na base).</p>
+          </div>
+          <div class="tier-item tier-c">
+            <span class="tier-tag">TIER C</span>
+            <div class="tier-letters">I, J, Q</div>
+            <p>Letras estreitas ou assimétricas que demandam compensação gráfica com setas, pontos ou serifas para não sumirem.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <span class="brand-name">VANDAL LAB</span>
+        <p>Projeto acadêmico de Design, Interatividade & Arte Urbana (HTML5 + CSS3 + JS Puro).</p>
+      </div>
+      <div class="footer-links">
+        <span>Inspirado na metodologia de Letter Science do <strong>Joshgrafx.com</strong></span>
+        <span>Pixação & Graffiti Culture // 2026</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
