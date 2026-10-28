@@ -230,7 +230,7 @@ const RANDOM_TAGS = [
 
 const state = {
   text: 'VANDAL',
-  style: 'pixo', // 'pixo' | 'throwup' | 'wild' | 'drip'
+  style: 'muro_sp', // 'pixo' | 'throwup' | 'wild' | 'drip'
   surface: 'brick', // 'brick' | 'concrete' | 'subway' | 'clean'
   fillColor: '#ffffff',
   outlineColor: '#000000',
@@ -1022,7 +1022,7 @@ function drawAddons(targetCtx, box, tagColor, glowColor) {
 
   // 3. Quotes (" ")
   if (state.addons.quotes) {
-    if (state.style === 'pixo') {
+    if (state.style === 'muro_sp') {
       const qSize = state.fontSize * 0.65;
       drawPixoRetoGlyph(targetCtx, '"', left - 42, top + 15, qSize, tagColor, glowColor, targetCtx.lineWidth);
       drawPixoRetoGlyph(targetCtx, '"', right + 22, top + 15, qSize, tagColor, glowColor, targetCtx.lineWidth);
@@ -1091,45 +1091,55 @@ function renderCanvas() {
   const dripXPoints = [];
   let bounds = { left: 0, right: 0, top: 0, bottom: 0, centerX: width / 2 };
 
-  // 3. Render according to Tag Style
-  if (state.style === 'pixo') {
-    // Pixo Reto Style (Bruno Corrente SP Alphabet)
-    const charSize = state.fontSize * 1.05;
-    const glyphW = charSize * 0.44;
-    const glyphH = charSize * 1.35;
-    const letterSpacing = 18;
-    const totalW = cleanText.length * glyphW + (cleanText.length - 1) * letterSpacing;
-    const startX = (width - totalW) / 2;
-    const startY = (height - glyphH) / 2 + 10;
-    const strokeW = Math.max(6, Math.floor(charSize * 0.075));
+    // 3. Render according to Tag Style (The 6 DaFont Fonts)
+  if (state.style === 'muro_sp') {
+    // Muro SP - Pixo Paulista (dafont.com/pt/muro-sp.font)
+    const fontSize = state.fontSize * 1.35;
+    ctx.font = `900 ${fontSize}px "Muro SP", sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const textX = width / 2;
+    const textY = height / 2;
+    const metrics = ctx.measureText(cleanText);
+    const tw = metrics.width;
+    const th = fontSize * 1.0;
 
     bounds = {
-      left: startX,
-      right: startX + totalW,
-      top: startY,
-      bottom: startY + glyphH,
-      centerX: width / 2
+      left: textX - tw / 2,
+      right: textX + tw / 2,
+      top: textY - th / 2,
+      bottom: textY + th / 2,
+      centerX: textX
     };
 
-    // Draw shadow / 3D extrusion pass
-    for (let i = 0; i < cleanText.length; i++) {
-      const char = cleanText[i];
-      const cx = startX + i * (glyphW + letterSpacing);
-      drawPixoRetoGlyph(ctx, char, cx + 4, startY + 4, charSize, state.outlineColor, null, strokeW + 2);
+    // 3D Shadow extrusion
+    for (let offset = 8; offset > 0; offset--) {
+      ctx.fillStyle = state.outlineColor;
+      ctx.fillText(cleanText, textX + offset, textY + offset);
     }
 
-    // Draw main sharp stroke pass
+    // Sharp Outline
+    ctx.strokeStyle = state.outlineColor;
+    ctx.lineWidth = Math.max(8, fontSize * 0.08);
+    ctx.lineJoin = 'miter';
+    ctx.strokeText(cleanText, textX, textY);
+
+    // Neon Fill & Glow
+    ctx.shadowColor = state.shadowColor;
+    ctx.shadowBlur = 18;
+    ctx.fillStyle = state.fillColor;
+    ctx.fillText(cleanText, textX, textY);
+
     for (let i = 0; i < cleanText.length; i++) {
-      const char = cleanText[i];
-      const cx = startX + i * (glyphW + letterSpacing);
-      drawPixoRetoGlyph(ctx, char, cx, startY, charSize, state.fillColor, state.shadowColor, strokeW);
-      dripXPoints.push(cx + glyphW * 0.25, cx + glyphW * 0.75);
+      const charOffset = (i - (cleanText.length - 1) / 2) * (tw / cleanText.length);
+      dripXPoints.push(textX + charOffset);
     }
 
-  } else if (state.style === 'wasted') {
-    // Most Wasted (DaFont #1 Wildstyle by Magique Fonts)
-    const fontSize = state.fontSize * 1.35;
-    ctx.font = `900 ${fontSize}px "Most Wasted", "Rubik Glitch", sans-serif`;
+  } else if (state.style === 'vandal_blow') {
+    // Vandal Blow Graffiti (dafont.com/pt/vandal-blow-graffiti.font)
+    const fontSize = state.fontSize * 1.3;
+    ctx.font = `900 ${fontSize}px "Vandal Blow", sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
@@ -1147,8 +1157,8 @@ function renderCanvas() {
       centerX: textX
     };
 
-    // 3D Shadow Extrusion
-    for (let offset = 10; offset > 0; offset--) {
+    // Deep 3D Shadow Block
+    for (let offset = 12; offset > 0; offset--) {
       ctx.fillStyle = state.outlineColor;
       ctx.fillText(cleanText, textX + offset, textY + offset);
     }
@@ -1159,9 +1169,9 @@ function renderCanvas() {
     ctx.lineJoin = 'miter';
     ctx.strokeText(cleanText, textX, textY);
 
-    // Inner Neon Glow & Fill
+    // Inner Fill & Glow
     ctx.shadowColor = state.shadowColor;
-    ctx.shadowBlur = 24;
+    ctx.shadowBlur = 22;
     ctx.fillStyle = state.fillColor;
     ctx.fillText(cleanText, textX, textY);
 
@@ -1170,10 +1180,10 @@ function renderCanvas() {
       dripXPoints.push(textX + charOffset);
     }
 
-  } else if (state.style === 'melting') {
-    // Melting Graffiti (DaFont Street Bomb)
-    const fontSize = state.fontSize * 1.3;
-    ctx.font = `900 ${fontSize}px "Melting Graffiti", "Syne", sans-serif`;
+  } else if (state.style === 'next_ups') {
+    // Next Ups - Marker Handstyle (dafont.com/pt/next-ups.font)
+    const fontSize = state.fontSize * 1.25;
+    ctx.font = `900 ${fontSize}px "Next Ups", sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
@@ -1191,32 +1201,70 @@ function renderCanvas() {
       centerX: textX
     };
 
-    // Deep Melt Shadow
-    for (let offset = 12; offset > 0; offset--) {
-      ctx.fillStyle = state.outlineColor;
-      ctx.fillText(cleanText, textX + offset * 0.5, textY + offset);
-    }
-
-    // Outline
+    // Fast Tag Shadow
     ctx.strokeStyle = state.outlineColor;
-    ctx.lineWidth = Math.max(14, fontSize * 0.12);
-    ctx.strokeText(cleanText, textX, textY);
+    ctx.lineWidth = 14;
+    ctx.lineJoin = 'round';
+    ctx.strokeText(cleanText, textX + 4, textY + 4);
 
-    // Fill
+    // Outer Glow & Main Tag
     ctx.shadowColor = state.shadowColor;
-    ctx.shadowBlur = 20;
+    ctx.shadowBlur = 18;
     ctx.fillStyle = state.fillColor;
     ctx.fillText(cleanText, textX, textY);
+
+    // Inner marker core
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = state.fillColor;
+    ctx.lineWidth = 4;
+    ctx.strokeText(cleanText, textX, textY);
 
     for (let i = 0; i < cleanText.length; i++) {
       const charOffset = (i - (cleanText.length - 1) / 2) * (tw / cleanText.length);
       dripXPoints.push(textX + charOffset);
     }
 
-  } else if (state.style === 'throwup') {
-    // Throw-up / Bubble Bombing
-    const fontSize = state.fontSize * 1.3;
-    ctx.font = `900 ${fontSize}px "Graffiti Street", "Syne", sans-serif`;
+  } else if (state.style === 'splatink') {
+    // Splatink - Ink Splatter (dafont.com/pt/splatink-2.font)
+    const fontSize = state.fontSize * 1.25;
+    ctx.font = `900 ${fontSize}px "Splatink", sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const textX = width / 2;
+    const textY = height / 2;
+    const metrics = ctx.measureText(cleanText);
+    const tw = metrics.width;
+    const th = fontSize * 0.9;
+
+    bounds = {
+      left: textX - tw / 2,
+      right: textX + tw / 2,
+      top: textY - th / 2,
+      bottom: textY + th / 2,
+      centerX: textX
+    };
+
+    // Splatter Outline
+    ctx.strokeStyle = state.outlineColor;
+    ctx.lineWidth = 14;
+    ctx.strokeText(cleanText, textX + 3, textY + 4);
+
+    // Inner Fill with High Glow
+    ctx.shadowColor = state.shadowColor;
+    ctx.shadowBlur = 25;
+    ctx.fillStyle = state.fillColor;
+    ctx.fillText(cleanText, textX, textY);
+
+    for (let i = 0; i < cleanText.length; i++) {
+      const charOffset = (i - (cleanText.length - 1) / 2) * (tw / cleanText.length);
+      dripXPoints.push(textX + charOffset - 10, textX + charOffset + 10);
+    }
+
+  } else if (state.style === 'throw_up') {
+    // Throw Up Font - Bubble Bombing (dafont.com/pt/throw-up-font.font)
+    const fontSize = state.fontSize * 1.35;
+    ctx.font = `900 ${fontSize}px "Throw Up Font", sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
@@ -1253,22 +1301,21 @@ function renderCanvas() {
     ctx.fillStyle = state.fillColor;
     ctx.fillText(cleanText, textX, textY);
 
-    // Specular Highlight Pills (Brilho branco superior clássico de Throw-up)
+    // Specular Highlight Pills
     ctx.shadowBlur = 0;
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 4;
     ctx.strokeText(cleanText, textX - 4, textY - 4);
 
-    // Sample drip points
     for (let i = 0; i < cleanText.length; i++) {
       const charOffset = (i - (cleanText.length - 1) / 2) * (tw / cleanText.length);
       dripXPoints.push(textX + charOffset);
     }
 
-  } else if (state.style === 'wild') {
-    // Handstyle Marker Flow
-    const fontSize = state.fontSize * 1.15;
-    ctx.font = `italic 800 ${fontSize}px "Permanent Marker", cursive, sans-serif`;
+  } else if (state.style === 'don_graffiti') {
+    // Don Graffiti - Classic Hip-Hop Piece (dafont.com/pt/don-graffiti.font)
+    const fontSize = state.fontSize * 1.3;
+    ctx.font = `900 ${fontSize}px "Don Graffiti", sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
@@ -1276,7 +1323,7 @@ function renderCanvas() {
     const textY = height / 2;
     const metrics = ctx.measureText(cleanText);
     const tw = metrics.width;
-    const th = fontSize * 0.8;
+    const th = fontSize * 0.9;
 
     bounds = {
       left: textX - tw / 2,
@@ -1286,64 +1333,27 @@ function renderCanvas() {
       centerX: textX
     };
 
-    // Shadow line
-    ctx.strokeStyle = state.outlineColor;
-    ctx.lineWidth = 14;
-    ctx.lineJoin = 'round';
-    ctx.strokeText(cleanText, textX + 4, textY + 4);
-
-    // Outer Glow & Main Tag
-    ctx.shadowColor = state.shadowColor;
-    ctx.shadowBlur = 15;
-    ctx.fillStyle = state.fillColor;
-    ctx.fillText(cleanText, textX, textY);
-
-    // Marker core stroke
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = state.fillColor;
-    ctx.lineWidth = 6;
-    ctx.strokeText(cleanText, textX, textY);
-
-    for (let i = 0; i < cleanText.length; i++) {
-      const charOffset = (i - (cleanText.length - 1) / 2) * (tw / cleanText.length);
-      dripXPoints.push(textX + charOffset);
+    // 3D Classic Extrusion
+    for (let offset = 10; offset > 0; offset--) {
+      ctx.fillStyle = state.outlineColor;
+      ctx.fillText(cleanText, textX + offset * 0.7, textY + offset);
     }
-
-  } else if (state.style === 'drip') {
-    // Drip Tag with heavy drippy street font (Dripping Drops from DaFont)
-    const fontSize = state.fontSize * 1.25;
-    ctx.font = `800 ${fontSize}px "Dripping Drops", "Sedgwick Ave Display", cursive, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    const textX = width / 2;
-    const textY = height / 2;
-    const metrics = ctx.measureText(cleanText);
-    const tw = metrics.width;
-    const th = fontSize * 0.85;
-
-    bounds = {
-      left: textX - tw / 2,
-      right: textX + tw / 2,
-      top: textY - th / 2,
-      bottom: textY + th / 2,
-      centerX: textX
-    };
 
     // Outline
     ctx.strokeStyle = state.outlineColor;
-    ctx.lineWidth = 16;
-    ctx.strokeText(cleanText, textX + 3, textY + 4);
+    ctx.lineWidth = Math.max(12, fontSize * 0.11);
+    ctx.lineJoin = 'round';
+    ctx.strokeText(cleanText, textX, textY);
 
     // Fill
     ctx.shadowColor = state.shadowColor;
-    ctx.shadowBlur = 22;
+    ctx.shadowBlur = 20;
     ctx.fillStyle = state.fillColor;
     ctx.fillText(cleanText, textX, textY);
 
     for (let i = 0; i < cleanText.length; i++) {
       const charOffset = (i - (cleanText.length - 1) / 2) * (tw / cleanText.length);
-      dripXPoints.push(textX + charOffset - 8, textX + charOffset + 8);
+      dripXPoints.push(textX + charOffset);
     }
   }
 

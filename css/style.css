@@ -3,26 +3,38 @@
    ========================================================================== */
 
 @font-face {
-  font-family: 'Most Wasted';
-  src: url('../fonts/MostWasted.woff') format('woff');
+  font-family: 'Muro SP';
+  src: url('../fonts/Muro_SP.otf') format('opentype');
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Dripping Drops';
-  src: url('../fonts/DrippingDrops.woff') format('woff');
+  font-family: 'Vandal Blow';
+  src: url('../fonts/Vandal_Blow.ttf') format('truetype');
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Melting Graffiti';
-  src: url('../fonts/MeltingGraffiti.woff') format('woff');
+  font-family: 'Next Ups';
+  src: url('../fonts/Next_Ups.ttf') format('truetype');
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Graffiti Street';
-  src: url('../fonts/GraffitiStreet.woff') format('woff');
+  font-family: 'Splatink';
+  src: url('../fonts/Splatink.otf') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Throw Up Font';
+  src: url('../fonts/Throw_Up_Font.ttf') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Don Graffiti';
+  src: url('../fonts/Don_Graffiti.otf') format('opentype');
   font-display: swap;
 }
 

@@ -9,12 +9,12 @@
 O **VANDAL LAB** permite que qualquer pessoa digite seu nome, apelido ou vulgo de rua e gere instantaneamente tags estilizadas de graffiti e pixação, além de receber uma **análise científica estrutural das letras**:
 
 1. **Renderização Gráfica em Tempo Real (Canvas 2D Engine)**:
-   - **⚡ Pixo Reto (SP Corrente)**: Geometria clássica das ruas de São Paulo inspirada na folha tipográfica de Bruno Corrente, com ângulos agudos, pontas afiadas, cruz no "I" e proporções esguias.
-   - **👑 Most Wasted (DaFont #1 Wildstyle)**: A fonte de graffiti mais baixada do DaFont (por Magique Fonts), com cortes agressivos, sombras e pontas de flecha.
-   - **💧 Drip Drops (DaFont Marker)**: Estilo canetão mop com pingos e gotas densas de tinta escorrendo pela parede.
-   - **🧪 Melting (Street Melt)**: Letras derretendo estilo aerosol com contorno grosso e massa plástica.
-   - **💣 Throw-Up (Bubble Bomb)**: Estilo balão clássico de Nova York com borda espessa, extrusão 3D e brilhos especulares.
-   - **🔥 Handstyle (Marker Flow)**: Caligrafia rápida e fluida com estética de canetão de feltro chanfrado.
+   - **⚡ Muro SP**: Autêntica pixação das ruas de São Paulo ([dafont.com/pt/muro-sp.font](https://www.dafont.com/pt/muro-sp.font)).
+   - **💥 Vandal Blow**: Wildstyle agressivo com cortes e arestas cortantes ([dafont.com/pt/vandal-blow-graffiti.font](https://www.dafont.com/pt/vandal-blow-graffiti.font)).
+   - **🔥 Next Ups**: Caligrafia rápida estilo canetão de feltro com dinamismo e fluxo ([dafont.com/pt/next-ups.font](https://www.dafont.com/pt/next-ups.font)).
+   - **💧 Splatink**: Efeito de tinta espirrada com gotas e manchas urbanas ([dafont.com/pt/splatink-2.font](https://www.dafont.com/pt/splatink-2.font)).
+   - **💣 Throw Up Font**: Estilo tradicional de letras bolha/balão de bombing nova-iorquino ([dafont.com/pt/throw-up-font.font](https://www.dafont.com/pt/throw-up-font.font)).
+   - **👑 Don Graffiti**: Peça clássica de hip-hop com preenchimento e extrusão 3D ([dafont.com/pt/don-graffiti.font](https://www.dafont.com/pt/don-graffiti.font)).
 
 2. **Adereços & Customização Urbana**:
    - Elementos clássicos: 👑 Coroa, 😇 Auréola, ➜ Seta de fluxo, " " Aspas de ênfase, ━ Underline dinâmico e '26 Marcador de ano.
