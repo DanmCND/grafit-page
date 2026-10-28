@@ -462,93 +462,150 @@ function drawBackground(targetCtx, width, height, surfaceType) {
 }
 
 /**
- * Authentic Pixo Reto Geometry Renderer (São Paulo Straight Letter Tagging)
+ * Authentic Pixo Reto Geometry Renderer
+ * Inspired by Bruno Corrente's Sao Paulo Pixo Reto Alphabet
  */
-function drawPixoRetoGlyph(gCtx, char, x, y, size, strokeColor, shadowColor, lineWidth) {
+function drawPixoRetoGlyph(gCtx, rawChar, x, y, size, strokeColor, shadowColor, lineWidth) {
   gCtx.save();
-  gCtx.lineCap = 'butt';
+  gCtx.lineCap = 'square';
   gCtx.lineJoin = 'miter';
-  gCtx.miterLimit = 6;
+  gCtx.miterLimit = 8;
   gCtx.lineWidth = lineWidth;
   gCtx.strokeStyle = strokeColor;
 
-  const w = size * 0.52;
-  const h = size * 1.15;
+  const w = size * 0.44;
+  const h = size * 1.35;
   const halfW = w / 2;
 
-  // 3D Shadow layer offset
+  // 3D Shadow / Glow layer offset
   if (shadowColor) {
     gCtx.shadowColor = shadowColor;
     gCtx.shadowBlur = 12;
   }
 
+  // Handle Accented Letters by extracting base and accent
+  let char = rawChar.toUpperCase();
+  let accent = null;
+
+  if ('ÁÀÃÂ'.includes(char)) { accent = char; char = 'A'; }
+  else if ('ÉÊ'.includes(char)) { accent = char; char = 'E'; }
+  else if ('Í'.includes(char)) { accent = char; char = 'I'; }
+  else if ('ÓÕÔ'.includes(char)) { accent = char; char = 'O'; }
+  else if ('Ú'.includes(char)) { accent = char; char = 'U'; }
+  else if (char === 'Ç') { accent = 'Ç'; char = 'C'; }
+
   gCtx.beginPath();
+
+  // Helper for drawing acute, grave, tilde, circumflex, cedilha
+  const drawAccent = () => {
+    if (!accent) return;
+    const ay = y - h * 0.08;
+    if (accent === 'Á' || accent === 'É' || accent === 'Í' || accent === 'Ó' || accent === 'Ú') {
+      // Acute slash
+      gCtx.moveTo(x + halfW - w * 0.15, ay);
+      gCtx.lineTo(x + halfW + w * 0.25, ay - h * 0.12);
+    } else if (accent === 'À') {
+      // Grave slash
+      gCtx.moveTo(x + halfW + w * 0.15, ay);
+      gCtx.lineTo(x + halfW - w * 0.25, ay - h * 0.12);
+    } else if (accent === 'Ã' || accent === 'Õ') {
+      // Angular Pixo Tilde (N-like / angular wave)
+      gCtx.moveTo(x + halfW - w * 0.35, ay);
+      gCtx.lineTo(x + halfW - w * 0.1, ay - h * 0.1);
+      gCtx.lineTo(x + halfW + w * 0.1, ay);
+      gCtx.lineTo(x + halfW + w * 0.35, ay - h * 0.1);
+    } else if (accent === 'Â' || accent === 'Ê' || accent === 'Ô') {
+      // Circumflex caret peak
+      gCtx.moveTo(x + halfW - w * 0.3, ay);
+      gCtx.lineTo(x + halfW, ay - h * 0.12);
+      gCtx.lineTo(x + halfW + w * 0.3, ay);
+    } else if (accent === 'Ç') {
+      // Cedilha
+      gCtx.moveTo(x + halfW, y + h);
+      gCtx.lineTo(x + halfW + w * 0.15, y + h + h * 0.12);
+      gCtx.lineTo(x + halfW - w * 0.1, y + h + h * 0.18);
+    }
+  };
 
   switch (char) {
     case 'A':
-      // Iconic SP Pixo 'A' - Sharp peak, vertical bars, angled crossbar
-      gCtx.moveTo(x, y + h);
-      gCtx.lineTo(x, y + h * 0.4);
-      gCtx.lineTo(x + halfW, y);
-      gCtx.lineTo(x + w, y + h * 0.4);
+      // Tall sharp needle apex, straight legs, and crossbar extending past both sides
+      gCtx.moveTo(x + halfW, y);
+      gCtx.lineTo(x, y + h);
+      gCtx.moveTo(x + halfW, y);
       gCtx.lineTo(x + w, y + h);
-      gCtx.moveTo(x, y + h * 0.6);
-      gCtx.lineTo(x + w, y + h * 0.6);
+      // Extended crossbar characteristic of Bruno Corrente's A
+      gCtx.moveTo(x - w * 0.18, y + h * 0.62);
+      gCtx.lineTo(x + w * 1.18, y + h * 0.62);
       break;
 
     case 'B':
-      gCtx.moveTo(x, y + h);
-      gCtx.lineTo(x, y);
-      gCtx.lineTo(x + w, y + h * 0.15);
-      gCtx.lineTo(x + halfW, y + h * 0.48);
+      // Tall vertical spine and two sharp triangular flags
+      gCtx.moveTo(x, y);
+      gCtx.lineTo(x, y + h);
+      // Top flag
+      gCtx.moveTo(x, y);
+      gCtx.lineTo(x + w, y + h * 0.22);
       gCtx.lineTo(x, y + h * 0.48);
-      gCtx.moveTo(x + halfW, y + h * 0.48);
-      gCtx.lineTo(x + w, y + h * 0.75);
+      // Bottom flag
+      gCtx.moveTo(x, y + h * 0.48);
+      gCtx.lineTo(x + w, y + h * 0.72);
       gCtx.lineTo(x, y + h);
       break;
 
     case 'C':
+      // Angular C with sharp corners
       gCtx.moveTo(x + w, y);
-      gCtx.lineTo(x, y + h * 0.2);
-      gCtx.lineTo(x, y + h * 0.8);
+      gCtx.lineTo(x, y);
+      gCtx.lineTo(x, y + h);
       gCtx.lineTo(x + w, y + h);
       break;
 
     case 'D':
-      gCtx.moveTo(x, y + h);
-      gCtx.lineTo(x, y);
-      gCtx.lineTo(x + w, y + h * 0.25);
-      gCtx.lineTo(x + w, y + h * 0.75);
+      // Tall spine and large sharp triangle/chevron pointing right
+      gCtx.moveTo(x, y);
+      gCtx.lineTo(x, y + h);
+      gCtx.moveTo(x, y);
+      gCtx.lineTo(x + w, y + h * 0.5);
       gCtx.lineTo(x, y + h);
       break;
 
     case 'E':
-      gCtx.moveTo(x + w, y);
-      gCtx.lineTo(x, y);
+      // Tall spine, top bar with downward hook, middle bar, bottom bar
+      gCtx.moveTo(x, y);
       gCtx.lineTo(x, y + h);
-      gCtx.lineTo(x + w, y + h);
+      gCtx.moveTo(x, y);
+      gCtx.lineTo(x + w, y);
+      gCtx.lineTo(x + w, y + h * 0.12);
       gCtx.moveTo(x, y + h * 0.5);
-      gCtx.lineTo(x + w * 0.8, y + h * 0.5);
+      gCtx.lineTo(x + w * 0.75, y + h * 0.5);
+      gCtx.moveTo(x, y + h);
+      gCtx.lineTo(x + w, y + h);
       break;
 
     case 'F':
-      gCtx.moveTo(x, y + h);
-      gCtx.lineTo(x, y);
+      // Spine, top bar with downward hook, middle bar
+      gCtx.moveTo(x, y);
+      gCtx.lineTo(x, y + h);
+      gCtx.moveTo(x, y);
       gCtx.lineTo(x + w, y);
-      gCtx.moveTo(x, y + h * 0.45);
-      gCtx.lineTo(x + w * 0.8, y + h * 0.45);
+      gCtx.lineTo(x + w, y + h * 0.12);
+      gCtx.moveTo(x, y + h * 0.5);
+      gCtx.lineTo(x + w * 0.75, y + h * 0.5);
       break;
 
     case 'G':
+      // Angular loop, vertical stem up, and left crossbar
       gCtx.moveTo(x + w, y);
-      gCtx.lineTo(x, y + h * 0.2);
-      gCtx.lineTo(x, y + h * 0.8);
+      gCtx.lineTo(x, y);
+      gCtx.lineTo(x, y + h);
       gCtx.lineTo(x + w, y + h);
       gCtx.lineTo(x + w, y + h * 0.5);
       gCtx.lineTo(x + halfW, y + h * 0.5);
       break;
 
     case 'H':
+      // Two tall parallel spines with middle crossbar
       gCtx.moveTo(x, y);
       gCtx.lineTo(x, y + h);
       gCtx.moveTo(x + w, y);
@@ -558,131 +615,150 @@ function drawPixoRetoGlyph(gCtx, char, x, y, size, strokeColor, shadowColor, lin
       break;
 
     case 'I':
-      gCtx.moveTo(x + halfW, y);
+      // Iconic Bruno Corrente Pixo 'I': tall stem with prominent 'X' cross on top!
+      gCtx.moveTo(x + halfW, y + h * 0.14);
       gCtx.lineTo(x + halfW, y + h);
-      gCtx.moveTo(x + halfW - 8, y);
-      gCtx.lineTo(x + halfW + 8, y);
-      gCtx.moveTo(x + halfW - 8, y + h);
-      gCtx.lineTo(x + halfW + 8, y + h);
+      // X on top
+      gCtx.moveTo(x + halfW - w * 0.35, y);
+      gCtx.lineTo(x + halfW + w * 0.35, y + h * 0.11);
+      gCtx.moveTo(x + halfW + w * 0.35, y);
+      gCtx.lineTo(x + halfW - w * 0.35, y + h * 0.11);
       break;
 
     case 'J':
-      gCtx.moveTo(x + w, y);
-      gCtx.lineTo(x + w, y + h * 0.8);
+      // Top bar with left hook, vertical stem down, and hook turning up-left
+      gCtx.moveTo(x, y + h * 0.12);
+      gCtx.lineTo(x, y);
+      gCtx.lineTo(x + w, y);
+      gCtx.moveTo(x + w * 0.85, y);
+      gCtx.lineTo(x + w * 0.85, y + h * 0.82);
       gCtx.lineTo(x + halfW, y + h);
-      gCtx.lineTo(x, y + h * 0.8);
+      gCtx.lineTo(x, y + h * 0.82);
       break;
 
     case 'K':
+      // Tall spine, upper diagonal to top-right, lower diagonal to bottom-right
       gCtx.moveTo(x, y);
       gCtx.lineTo(x, y + h);
-      gCtx.moveTo(x + w, y);
-      gCtx.lineTo(x, y + h * 0.5);
+      gCtx.moveTo(x, y + h * 0.5);
+      gCtx.lineTo(x + w, y);
+      gCtx.moveTo(x, y + h * 0.5);
       gCtx.lineTo(x + w, y + h);
       break;
 
     case 'L':
+      // Spine and bottom bar
       gCtx.moveTo(x, y);
       gCtx.lineTo(x, y + h);
       gCtx.lineTo(x + w, y + h);
       break;
 
     case 'M':
+      // Two tall outer pillars and inverted chevron rising from bottom
+      gCtx.moveTo(x, y);
+      gCtx.lineTo(x, y + h);
+      gCtx.moveTo(x + w, y);
+      gCtx.lineTo(x + w, y + h);
       gCtx.moveTo(x, y + h);
-      gCtx.lineTo(x, y);
-      gCtx.lineTo(x + halfW, y + h * 0.6);
-      gCtx.lineTo(x + w, y);
+      gCtx.lineTo(x + halfW, y + h * 0.45);
       gCtx.lineTo(x + w, y + h);
       break;
 
     case 'N':
-      gCtx.moveTo(x, y + h);
-      gCtx.lineTo(x, y);
-      gCtx.lineTo(x + w, y + h);
+      // Two pillars with top-left to bottom-right diagonal slash
+      gCtx.moveTo(x, y);
+      gCtx.lineTo(x, y + h);
       gCtx.lineTo(x + w, y);
+      gCtx.lineTo(x + w, y + h);
       break;
 
     case 'O':
-      // Diamond hexagon
+      // Iconic Pixo Diamond / Rhombus!
       gCtx.moveTo(x + halfW, y);
-      gCtx.lineTo(x + w, y + h * 0.3);
-      gCtx.lineTo(x + w, y + h * 0.7);
+      gCtx.lineTo(x + w, y + h * 0.5);
       gCtx.lineTo(x + halfW, y + h);
-      gCtx.lineTo(x, y + h * 0.7);
-      gCtx.lineTo(x, y + h * 0.3);
+      gCtx.lineTo(x, y + h * 0.5);
       gCtx.closePath();
       break;
 
     case 'P':
-      gCtx.moveTo(x, y + h);
+      // Left vertical spine with top-left hook and sharp upper flag
+      gCtx.moveTo(x - w * 0.2, y + h * 0.12);
       gCtx.lineTo(x, y);
-      gCtx.lineTo(x + w, y + h * 0.15);
-      gCtx.lineTo(x + w, y + h * 0.4);
-      gCtx.lineTo(x, y + h * 0.5);
+      gCtx.lineTo(x, y + h);
+      gCtx.moveTo(x, y);
+      gCtx.lineTo(x + w, y + h * 0.24);
+      gCtx.lineTo(x, y + h * 0.48);
       break;
 
     case 'Q':
+      // Elongated Diamond with diagonal slash tail cutting through
       gCtx.moveTo(x + halfW, y);
-      gCtx.lineTo(x + w, y + h * 0.3);
-      gCtx.lineTo(x + w, y + h * 0.7);
+      gCtx.lineTo(x + w, y + h * 0.5);
       gCtx.lineTo(x + halfW, y + h);
-      gCtx.lineTo(x, y + h * 0.7);
-      gCtx.lineTo(x, y + h * 0.3);
+      gCtx.lineTo(x, y + h * 0.5);
       gCtx.closePath();
-      gCtx.moveTo(x + halfW, y + h * 0.6);
-      gCtx.lineTo(x + w + 6, y + h + 8);
+      gCtx.moveTo(x + halfW * 0.8, y + h * 0.6);
+      gCtx.lineTo(x + w * 1.25, y + h * 1.08);
       break;
 
     case 'R':
-      gCtx.moveTo(x, y + h);
+      // Left vertical spine, top hook, upper flag and diagonal leg
+      gCtx.moveTo(x - w * 0.2, y + h * 0.12);
       gCtx.lineTo(x, y);
-      gCtx.lineTo(x + w, y + h * 0.15);
-      gCtx.lineTo(x + w, y + h * 0.4);
-      gCtx.lineTo(x, y + h * 0.5);
-      gCtx.moveTo(x + halfW * 0.7, y + h * 0.5);
+      gCtx.lineTo(x, y + h);
+      gCtx.moveTo(x, y);
+      gCtx.lineTo(x + w, y + h * 0.24);
+      gCtx.lineTo(x, y + h * 0.48);
       gCtx.lineTo(x + w, y + h);
       break;
 
     case 'S':
-      // Sharp Z-slash pixo S
+      // Sharp 4-stroke Z-snake
       gCtx.moveTo(x + w, y);
       gCtx.lineTo(x, y + h * 0.2);
       gCtx.lineTo(x + w, y + h * 0.5);
       gCtx.lineTo(x, y + h * 0.8);
-      gCtx.lineTo(x, y + h);
       gCtx.lineTo(x + w, y + h);
       break;
 
     case 'T':
-      gCtx.moveTo(x, y);
+      // Crossbar with left and right downward spikes, and vertical center stem
+      gCtx.moveTo(x, y + h * 0.16);
+      gCtx.lineTo(x, y);
       gCtx.lineTo(x + w, y);
+      gCtx.lineTo(x + w, y + h * 0.16);
       gCtx.moveTo(x + halfW, y);
       gCtx.lineTo(x + halfW, y + h);
       break;
 
     case 'U':
+      // Vertical sides and bottom angled corner
       gCtx.moveTo(x, y);
-      gCtx.lineTo(x, y + h * 0.8);
+      gCtx.lineTo(x, y + h * 0.85);
       gCtx.lineTo(x + halfW, y + h);
-      gCtx.lineTo(x + w, y + h * 0.8);
+      gCtx.lineTo(x + w, y + h * 0.85);
       gCtx.lineTo(x + w, y);
       break;
 
     case 'V':
+      // Sharp triangular inverted peak
       gCtx.moveTo(x, y);
       gCtx.lineTo(x + halfW, y + h);
       gCtx.lineTo(x + w, y);
       break;
 
     case 'W':
+      // Double sharp V with central peak
       gCtx.moveTo(x, y);
-      gCtx.lineTo(x + halfW * 0.5, y + h);
-      gCtx.lineTo(x + halfW, y + h * 0.4);
-      gCtx.lineTo(x + halfW * 1.5, y + h);
+      gCtx.lineTo(x + w * 0.25, y + h);
+      gCtx.lineTo(x + halfW, y + h * 0.42);
+      gCtx.lineTo(x + w * 0.75, y + h);
       gCtx.lineTo(x + w, y);
       break;
 
     case 'X':
+      // Tall sharp scissor cross
       gCtx.moveTo(x, y);
       gCtx.lineTo(x + w, y + h);
       gCtx.moveTo(x + w, y);
@@ -690,27 +766,169 @@ function drawPixoRetoGlyph(gCtx, char, x, y, size, strokeColor, shadowColor, lin
       break;
 
     case 'Y':
+      // Upper diagonal arms meeting at center, and straight stem down
       gCtx.moveTo(x, y);
-      gCtx.lineTo(x + halfW, y + h * 0.5);
+      gCtx.lineTo(x + halfW, y + h * 0.48);
       gCtx.lineTo(x + w, y);
-      gCtx.moveTo(x + halfW, y + h * 0.5);
+      gCtx.moveTo(x + halfW, y + h * 0.48);
       gCtx.lineTo(x + halfW, y + h);
       break;
 
     case 'Z':
+      // Top bar, diagonal slash, bottom bar, and central crossbar
       gCtx.moveTo(x, y);
       gCtx.lineTo(x + w, y);
       gCtx.lineTo(x, y + h);
       gCtx.lineTo(x + w, y + h);
-      gCtx.moveTo(x + halfW * 0.5, y + h * 0.5);
-      gCtx.lineTo(x + halfW * 1.5, y + h * 0.5);
+      gCtx.moveTo(x + halfW - w * 0.3, y + h * 0.5);
+      gCtx.lineTo(x + halfW + w * 0.3, y + h * 0.5);
+      break;
+
+    // Numbers (0-9 from Bruno Corrente)
+    case '0':
+      // Elongated diamond with inner vertical slash
+      gCtx.moveTo(x + halfW, y);
+      gCtx.lineTo(x + w, y + h * 0.5);
+      gCtx.lineTo(x + halfW, y + h);
+      gCtx.lineTo(x, y + h * 0.5);
+      gCtx.closePath();
+      gCtx.moveTo(x + halfW, y + h * 0.25);
+      gCtx.lineTo(x + halfW, y + h * 0.75);
+      break;
+
+    case '1':
+      // Needle stem with top-left flag
+      gCtx.moveTo(x, y + h * 0.25);
+      gCtx.lineTo(x + halfW, y);
+      gCtx.lineTo(x + halfW, y + h);
+      break;
+
+    case '2':
+      // Angular top, diagonal to bottom-left, bottom bar
+      gCtx.moveTo(x, y);
+      gCtx.lineTo(x + w, y);
+      gCtx.lineTo(x + w, y + h * 0.35);
+      gCtx.lineTo(x, y + h);
+      gCtx.lineTo(x + w, y + h);
+      break;
+
+    case '3':
+      // Double angular open chevron
+      gCtx.moveTo(x, y);
+      gCtx.lineTo(x + w, y);
+      gCtx.lineTo(x + halfW, y + h * 0.5);
+      gCtx.lineTo(x + w, y + h * 0.65);
+      gCtx.lineTo(x, y + h);
+      break;
+
+    case '4':
+      // Vertical stem and angular left arm
+      gCtx.moveTo(x + w * 0.75, y);
+      gCtx.lineTo(x + w * 0.75, y + h);
+      gCtx.moveTo(x + w * 0.75, y);
+      gCtx.lineTo(x, y + h * 0.65);
+      gCtx.lineTo(x + w, y + h * 0.65);
+      break;
+
+    case '5':
+      // Top bar, down-left, right box, bottom bar
+      gCtx.moveTo(x + w, y);
+      gCtx.lineTo(x, y);
+      gCtx.lineTo(x, y + h * 0.45);
+      gCtx.lineTo(x + w, y + h * 0.45);
+      gCtx.lineTo(x + w, y + h);
+      gCtx.lineTo(x, y + h);
+      break;
+
+    case '6':
+      // Starts top-right, down-left to bottom loop
+      gCtx.moveTo(x + w, y);
+      gCtx.lineTo(x, y);
+      gCtx.lineTo(x, y + h);
+      gCtx.lineTo(x + w, y + h);
+      gCtx.lineTo(x + w, y + h * 0.5);
+      gCtx.lineTo(x, y + h * 0.5);
+      break;
+
+    case '7':
+      // Top bar, diagonal down-left, and center crossbar
+      gCtx.moveTo(x, y);
+      gCtx.lineTo(x + w, y);
+      gCtx.lineTo(x, y + h);
+      gCtx.moveTo(x + halfW - w * 0.3, y + h * 0.5);
+      gCtx.lineTo(x + halfW + w * 0.3, y + h * 0.5);
+      break;
+
+    case '8':
+      // Two stacked angular diamonds
+      gCtx.moveTo(x + halfW, y);
+      gCtx.lineTo(x + w, y + h * 0.25);
+      gCtx.lineTo(x + halfW, y + h * 0.48);
+      gCtx.lineTo(x, y + h * 0.25);
+      gCtx.closePath();
+      gCtx.moveTo(x + halfW, y + h * 0.48);
+      gCtx.lineTo(x + w, y + h * 0.75);
+      gCtx.lineTo(x + halfW, y + h);
+      gCtx.lineTo(x, y + h * 0.75);
+      gCtx.closePath();
+      break;
+
+    case '9':
+      // Top loop and right stem down
+      gCtx.moveTo(x + w, y + h * 0.5);
+      gCtx.lineTo(x, y + h * 0.5);
+      gCtx.lineTo(x, y);
+      gCtx.lineTo(x + w, y);
+      gCtx.lineTo(x + w, y + h);
+      break;
+
+    // Punctuation (from Bruno Corrente)
+    case '!':
+      // Needle stem with 'X' cross below instead of dot!
+      gCtx.moveTo(x + halfW, y);
+      gCtx.lineTo(x + halfW, y + h * 0.75);
+      // X cross
+      gCtx.moveTo(x + halfW - w * 0.25, y + h * 0.85);
+      gCtx.lineTo(x + halfW + w * 0.25, y + h * 0.98);
+      gCtx.moveTo(x + halfW + w * 0.25, y + h * 0.85);
+      gCtx.lineTo(x + halfW - w * 0.25, y + h * 0.98);
+      break;
+
+    case '?':
+      // Hook, vertical stem, and 'X' cross below
+      gCtx.moveTo(x, y + h * 0.15);
+      gCtx.lineTo(x, y);
+      gCtx.lineTo(x + w, y);
+      gCtx.lineTo(x + w, y + h * 0.4);
+      gCtx.lineTo(x + halfW, y + h * 0.4);
+      gCtx.lineTo(x + halfW, y + h * 0.7);
+      // X cross
+      gCtx.moveTo(x + halfW - w * 0.25, y + h * 0.85);
+      gCtx.lineTo(x + halfW + w * 0.25, y + h * 0.98);
+      gCtx.moveTo(x + halfW + w * 0.25, y + h * 0.85);
+      gCtx.lineTo(x + halfW - w * 0.25, y + h * 0.98);
+      break;
+
+    case '"':
+      // Iconic Pixo Quotes: two angled needle strokes
+      gCtx.moveTo(x, y + h * 0.15);
+      gCtx.lineTo(x, y + h * 0.7);
+      gCtx.moveTo(x + w * 0.65, y);
+      gCtx.lineTo(x + w * 0.65, y + h * 0.55);
+      break;
+
+    case ' ':
+      // Space - draw nothing
       break;
 
     default:
-      // Numbers / generic
+      // Fallback
       gCtx.strokeRect(x, y, w, h);
       break;
   }
+
+  // Draw diacritic accent if present
+  drawAccent();
 
   gCtx.stroke();
   gCtx.restore();
@@ -804,9 +1022,15 @@ function drawAddons(targetCtx, box, tagColor, glowColor) {
 
   // 3. Quotes (" ")
   if (state.addons.quotes) {
-    targetCtx.font = 'bold 36px "Permanent Marker", cursive, sans-serif';
-    targetCtx.fillText('“', left - 40, top + 35);
-    targetCtx.fillText('”', right + 15, top + 35);
+    if (state.style === 'pixo') {
+      const qSize = state.fontSize * 0.65;
+      drawPixoRetoGlyph(targetCtx, '"', left - 42, top + 15, qSize, tagColor, glowColor, targetCtx.lineWidth);
+      drawPixoRetoGlyph(targetCtx, '"', right + 22, top + 15, qSize, tagColor, glowColor, targetCtx.lineWidth);
+    } else {
+      targetCtx.font = 'bold 36px "Permanent Marker", cursive, sans-serif';
+      targetCtx.fillText('“', left - 40, top + 35);
+      targetCtx.fillText('”', right + 15, top + 35);
+    }
   }
 
   // 4. Underline & Arrow (━ ➜)
@@ -869,20 +1093,21 @@ function renderCanvas() {
 
   // 3. Render according to Tag Style
   if (state.style === 'pixo') {
-    // Pixo Reto Style
-    const charSize = state.fontSize * 1.1;
-    const glyphW = charSize * 0.52;
-    const letterSpacing = 14;
+    // Pixo Reto Style (Bruno Corrente SP Alphabet)
+    const charSize = state.fontSize * 1.05;
+    const glyphW = charSize * 0.44;
+    const glyphH = charSize * 1.35;
+    const letterSpacing = 18;
     const totalW = cleanText.length * glyphW + (cleanText.length - 1) * letterSpacing;
     const startX = (width - totalW) / 2;
-    const startY = (height - charSize * 1.15) / 2 + 10;
-    const strokeW = Math.max(7, Math.floor(charSize * 0.085));
+    const startY = (height - glyphH) / 2 + 10;
+    const strokeW = Math.max(6, Math.floor(charSize * 0.075));
 
     bounds = {
       left: startX,
       right: startX + totalW,
       top: startY,
-      bottom: startY + charSize * 1.15,
+      bottom: startY + glyphH,
       centerX: width / 2
     };
 
@@ -890,7 +1115,7 @@ function renderCanvas() {
     for (let i = 0; i < cleanText.length; i++) {
       const char = cleanText[i];
       const cx = startX + i * (glyphW + letterSpacing);
-      drawPixoRetoGlyph(ctx, char, cx + 5, startY + 5, charSize, state.outlineColor, null, strokeW + 2);
+      drawPixoRetoGlyph(ctx, char, cx + 4, startY + 4, charSize, state.outlineColor, null, strokeW + 2);
     }
 
     // Draw main sharp stroke pass
@@ -901,10 +1126,97 @@ function renderCanvas() {
       dripXPoints.push(cx + glyphW * 0.25, cx + glyphW * 0.75);
     }
 
+  } else if (state.style === 'wasted') {
+    // Most Wasted (DaFont #1 Wildstyle by Magique Fonts)
+    const fontSize = state.fontSize * 1.35;
+    ctx.font = `900 ${fontSize}px "Most Wasted", "Rubik Glitch", sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const textX = width / 2;
+    const textY = height / 2;
+    const metrics = ctx.measureText(cleanText);
+    const tw = metrics.width;
+    const th = fontSize * 0.85;
+
+    bounds = {
+      left: textX - tw / 2,
+      right: textX + tw / 2,
+      top: textY - th / 2,
+      bottom: textY + th / 2,
+      centerX: textX
+    };
+
+    // 3D Shadow Extrusion
+    for (let offset = 10; offset > 0; offset--) {
+      ctx.fillStyle = state.outlineColor;
+      ctx.fillText(cleanText, textX + offset, textY + offset);
+    }
+
+    // Heavy Street Outline
+    ctx.strokeStyle = state.outlineColor;
+    ctx.lineWidth = Math.max(12, fontSize * 0.1);
+    ctx.lineJoin = 'miter';
+    ctx.strokeText(cleanText, textX, textY);
+
+    // Inner Neon Glow & Fill
+    ctx.shadowColor = state.shadowColor;
+    ctx.shadowBlur = 24;
+    ctx.fillStyle = state.fillColor;
+    ctx.fillText(cleanText, textX, textY);
+
+    for (let i = 0; i < cleanText.length; i++) {
+      const charOffset = (i - (cleanText.length - 1) / 2) * (tw / cleanText.length);
+      dripXPoints.push(textX + charOffset);
+    }
+
+  } else if (state.style === 'melting') {
+    // Melting Graffiti (DaFont Street Bomb)
+    const fontSize = state.fontSize * 1.3;
+    ctx.font = `900 ${fontSize}px "Melting Graffiti", "Syne", sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const textX = width / 2;
+    const textY = height / 2;
+    const metrics = ctx.measureText(cleanText);
+    const tw = metrics.width;
+    const th = fontSize * 0.85;
+
+    bounds = {
+      left: textX - tw / 2,
+      right: textX + tw / 2,
+      top: textY - th / 2,
+      bottom: textY + th / 2,
+      centerX: textX
+    };
+
+    // Deep Melt Shadow
+    for (let offset = 12; offset > 0; offset--) {
+      ctx.fillStyle = state.outlineColor;
+      ctx.fillText(cleanText, textX + offset * 0.5, textY + offset);
+    }
+
+    // Outline
+    ctx.strokeStyle = state.outlineColor;
+    ctx.lineWidth = Math.max(14, fontSize * 0.12);
+    ctx.strokeText(cleanText, textX, textY);
+
+    // Fill
+    ctx.shadowColor = state.shadowColor;
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = state.fillColor;
+    ctx.fillText(cleanText, textX, textY);
+
+    for (let i = 0; i < cleanText.length; i++) {
+      const charOffset = (i - (cleanText.length - 1) / 2) * (tw / cleanText.length);
+      dripXPoints.push(textX + charOffset);
+    }
+
   } else if (state.style === 'throwup') {
     // Throw-up / Bubble Bombing
-    const fontSize = state.fontSize * 1.25;
-    ctx.font = `900 ${fontSize}px "Syne", sans-serif`;
+    const fontSize = state.fontSize * 1.3;
+    ctx.font = `900 ${fontSize}px "Graffiti Street", "Syne", sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
@@ -998,9 +1310,9 @@ function renderCanvas() {
     }
 
   } else if (state.style === 'drip') {
-    // Drip Tag with heavy drippy street font
-    const fontSize = state.fontSize * 1.2;
-    ctx.font = `800 ${fontSize}px "Sedgwick Ave Display", cursive, sans-serif`;
+    // Drip Tag with heavy drippy street font (Dripping Drops from DaFont)
+    const fontSize = state.fontSize * 1.25;
+    ctx.font = `800 ${fontSize}px "Dripping Drops", "Sedgwick Ave Display", cursive, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
@@ -1008,7 +1320,7 @@ function renderCanvas() {
     const textY = height / 2;
     const metrics = ctx.measureText(cleanText);
     const tw = metrics.width;
-    const th = fontSize * 0.8;
+    const th = fontSize * 0.85;
 
     bounds = {
       left: textX - tw / 2,
@@ -1532,6 +1844,13 @@ function initApp() {
   // Initial draw & analysis
   renderCanvas();
   updateLetterScienceUI();
+
+  // Re-render when custom DaFont fonts are fully loaded into memory
+  if (document.fonts) {
+    document.fonts.ready.then(() => {
+      renderCanvas();
+    });
+  }
 }
 
 // Run when DOM is ready

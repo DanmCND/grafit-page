@@ -9,10 +9,12 @@
 O **VANDAL LAB** permite que qualquer pessoa digite seu nome, apelido ou vulgo de rua e gere instantaneamente tags estilizadas de graffiti e pixação, além de receber uma **análise científica estrutural das letras**:
 
 1. **Renderização Gráfica em Tempo Real (Canvas 2D Engine)**:
-   - **Pixo Reto (SP Straight)**: Geometria clássica das ruas de São Paulo, com ângulos retos, traços cortantes e estética vertical.
-   - **Throw-Up (Bubble Bomb)**: Estilo balão clássico de Nova York, com contorno espesso (fat outline), extrusão 3D e brilhos especulares (pill highlights).
-   - **Handstyle (Marker Flow)**: Caligrafia fluida com estética de canetão de feltro (mop/chisel tip).
-   - **Drip Tag (Fat Cap)**: Estilo com simulação física de tinta escorrendo (_drips_) e gotas acumuladas.
+   - **⚡ Pixo Reto (SP Corrente)**: Geometria clássica das ruas de São Paulo inspirada na folha tipográfica de Bruno Corrente, com ângulos agudos, pontas afiadas, cruz no "I" e proporções esguias.
+   - **👑 Most Wasted (DaFont #1 Wildstyle)**: A fonte de graffiti mais baixada do DaFont (por Magique Fonts), com cortes agressivos, sombras e pontas de flecha.
+   - **💧 Drip Drops (DaFont Marker)**: Estilo canetão mop com pingos e gotas densas de tinta escorrendo pela parede.
+   - **🧪 Melting (Street Melt)**: Letras derretendo estilo aerosol com contorno grosso e massa plástica.
+   - **💣 Throw-Up (Bubble Bomb)**: Estilo balão clássico de Nova York com borda espessa, extrusão 3D e brilhos especulares.
+   - **🔥 Handstyle (Marker Flow)**: Caligrafia rápida e fluida com estética de canetão de feltro chanfrado.
 
 2. **Adereços & Customização Urbana**:
    - Elementos clássicos: 👑 Coroa, 😇 Auréola, ➜ Seta de fluxo, " " Aspas de ênfase, ━ Underline dinâmico e '26 Marcador de ano.
@@ -39,9 +41,10 @@ O **VANDAL LAB** permite que qualquer pessoa digite seu nome, apelido ou vulgo d
 gitpages/
 ├── index.html        # Estrutura semântica, layout responsivo e acessibilidade
 ├── css/
-│   └── style.css     # Design system dark underground, cores neon e animações
+│   └── style.css     # Design system dark underground, @font-face e cores neon
 ├── js/
-│   └── script.js     # Motor Canvas 2D, algoritmo Letter Science, sintetizador de áudio e eventos
+│   └── script.js     # Motor Canvas 2D, algoritmo Letter Science, sintetizador e eventos
+├── fonts/            # Fontes de graffiti do DaFont (Most Wasted, Dripping Drops, etc.)
 └── README.md         # Documentação e guia de apresentação
 ```
 

@@ -1,4 +1,32 @@
 /* ==========================================================================
+   DAFONT GRAFFITI FONTS (LOCAL @FONT-FACE)
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Most Wasted';
+  src: url('../fonts/MostWasted.woff') format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Dripping Drops';
+  src: url('../fonts/DrippingDrops.woff') format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Melting Graffiti';
+  src: url('../fonts/MeltingGraffiti.woff') format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Graffiti Street';
+  src: url('../fonts/GraffitiStreet.woff') format('woff');
+  font-display: swap;
+}
+
+/* ==========================================================================
    VANDAL LAB - DESIGN SYSTEM & URBAN AESTHETICS
    ========================================================================== */
 
